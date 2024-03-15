@@ -8,6 +8,10 @@ import android.util.Log
 import android.view.SurfaceHolder
 import java.util.*
 
+const val MAX_TIME: Float = 60f * 24f // number of minutes per day
+const val HSV_MAX_HUE = 360f
+const val HSV_VALUE = 0.5f // TODO: Make configurable
+const val HSV_SATURATION = 0.5f // TODO: Make configurable
 
 class WPService : WallpaperService() {
     override fun onCreateEngine(): Engine = WPEngine()
@@ -59,12 +63,10 @@ class WPService : WallpaperService() {
             val hours: Int = calendar.get(Calendar.HOUR_OF_DAY)
             val minutes: Int = calendar.get(Calendar.MINUTE)
             val timeInMinutes: Int = hours * 60 + minutes
-            val maxTime: Float = 60f * 24f // number of minutes per day
-            val maxHue = 360f
-            val hue: Float = timeInMinutes.toFloat() / maxTime * maxHue
+            val hsvHue: Float = timeInMinutes.toFloat() / MAX_TIME * HSV_MAX_HUE
 
-            val color: Int = Color.HSVToColor(floatArrayOf(hue, 1f, 1f))
-            Log.i("color-filter", "timeInMinutes: $timeInMinutes -> hue: $hue")
+            val color: Int = Color.HSVToColor(floatArrayOf(hsvHue, HSV_SATURATION, HSV_VALUE))
+            Log.i("color-filter", "timeInMinutes: $timeInMinutes -> hue: $hsvHue")
             return PorterDuffColorFilter(color, blendMode)
         }
 
